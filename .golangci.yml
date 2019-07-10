@@ -1,0 +1,97 @@
+run:
+  deadline: 1m # default 1m
+
+linters-settings:
+  errcheck:
+    check-type-assertions: true # default false
+    check-blank: true # default false
+    ignore: "fmt:.*" # default fmt:.*
+    exclude: "" # default ""
+  govet:
+    check-shadowing: true # default false
+    settings:
+      shadow:
+        strict: true # default false
+  structcheck:
+    exported-fields: true # default false
+  unused:
+    check-exported: true # default false
+  varcheck:
+    exported-fields: true # default false
+  dupl:
+    threshold: 150 # default 150
+  goconst:
+    min-len: 3 # default 3
+    min-occurrences: 3 # default 3
+  gocritic:
+    settings:
+      captLocal:
+        paramsOnly: false # default true
+      elseif:
+        skipBalanced: false # default true
+      underef:
+        skipRecvDeref: false # default true
+  gocyclo:
+    min-complexity: 10 # default 30
+  goimports:
+    local-prefixes: github.com/maratori/pt
+  golint:
+    min-confidence: 0.8 # default 0.8
+  lll:
+    line-length: 120 # default 120
+  maligned:
+    suggest-new: true # default false
+  misspell:
+    locale: us
+    ignore-words: "" # default: ""
+  nakedret:
+    max-func-lines: 30 # default 30
+  prealloc:
+    simple: false # default true
+    range-loops: true # default true
+    for-loops: true # default false
+  unparam:
+    check-exported: true # default false
+
+linters:
+  disable-all: true
+  enable:
+    ## enabled by default
+    - deadcode
+    - errcheck
+    - gosimple
+    - govet
+    - ineffassign
+    - staticcheck
+    - structcheck
+    - typecheck
+    - unused
+    - varcheck
+    ## disabled by default
+    - bodyclose
+    - dupl
+    - gochecknoglobals
+    - gochecknoinits
+    - goconst
+    - gocritic
+    - gocyclo
+    - goimports
+    - golint
+    - gosec
+    - interfacer
+    - lll
+    - maligned
+    - misspell
+    - nakedret
+    - prealloc
+    - scopelint
+    - unconvert
+    - unparam
+
+issues:
+  max-issues-per-linter: 0
+  max-same-issues: 0
+  # TODO: remove
+  exclude-rules:
+    - linters: unused
+      text: "U1000"
