@@ -23,6 +23,9 @@ func Parallel(t *testing.T, tests ...testing.InternalTest) {
 }
 
 func Test(name string, test func(t *testing.T)) testing.InternalTest {
+	if test == nil {
+		panic("test can not be nil")
+	}
 	return testing.InternalTest{
 		Name: name,
 		F:    test,
