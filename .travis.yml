@@ -9,7 +9,10 @@ env:
   global:
     - GO111MODULE=on
 script:
-  - go test -race -p 8 -parallel 8 ./...
+  - if [ $TRAVIS_GO_VERSION = "1.12.x" ]; then go test -race -p=8 -parallel=8 -coverprofile=coverage.txt ./...; fi
+  - if [ $TRAVIS_GO_VERSION != "1.12.x" ]; then go test -race -p=8 -parallel=8 ./...; fi
+after_success:
+  - if [ $TRAVIS_GO_VERSION = "1.12.x" ]; then bash <(curl -s https://codecov.io/bash); fi
 
 jobs:
   include:
