@@ -1,0 +1,9 @@
+language: go
+go:
+  - "1.12"
+  - "1.11"
+  - "1.10"
+  - "1.9"
+  - "1.8"
+script:
+  - go test -race -p 8 -parallel 8 ./...
