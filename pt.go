@@ -13,6 +13,9 @@ func TotalParallel(t *testing.T, tests ...testing.InternalTest) {
 }
 
 func Parallel(t *testing.T, tests ...testing.InternalTest) {
+	if t == nil {
+		panic("argument t *testing.T can not be nil")
+	}
 	for _, test := range tests {
 		test := test
 		t.Run(test.Name, func(t *testing.T) {
@@ -22,22 +25,22 @@ func Parallel(t *testing.T, tests ...testing.InternalTest) {
 	}
 }
 
-func Test(name string, test func(t *testing.T)) testing.InternalTest {
-	if test == nil {
-		panic("test can not be nil")
-	}
-	return testing.InternalTest{
-		Name: name,
-		F:    test,
-	}
-}
-
 func Group(name string, tests ...testing.InternalTest) testing.InternalTest {
 	return testing.InternalTest{
 		Name: name,
 		F: func(t *testing.T) {
 			Parallel(t, tests...)
 		},
+	}
+}
+
+func Test(name string, test func(t *testing.T)) testing.InternalTest {
+	if test == nil {
+		panic("argument test func(t *testing.T) can not be nil")
+	}
+	return testing.InternalTest{
+		Name: name,
+		F:    test,
 	}
 }
 
