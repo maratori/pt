@@ -41,12 +41,10 @@ func TestParallel(t *testing.T) {
 			t.Error("test is not called")
 		}
 	})
-	t.Run("should run 2 tests parallel", func(t *testing.T) {
-		singleTestTime := 50 * time.Millisecond
-		timeout := singleTestTime + 20*time.Millisecond
+	t.Run("should run 2 tests", func(t *testing.T) {
+		t.Parallel()
 		called1 := false
 		called2 := false
-		start := time.Now()
 		t.Run("internal", func(it *testing.T) {
 			pt.Parallel(it,
 				testing.InternalTest{F: func(*testing.T) {
@@ -54,24 +52,17 @@ func TestParallel(t *testing.T) {
 						t.Error("test1 is called twice")
 					}
 					called1 = true
-					time.Sleep(singleTestTime)
+
 				}},
 				testing.InternalTest{F: func(*testing.T) {
 					if called2 {
 						t.Error("test2 is called twice")
 					}
 					called2 = true
-					time.Sleep(singleTestTime)
+
 				}},
 			)
 		})
-		elapsed := time.Since(start)
-		if elapsed < singleTestTime {
-			t.Errorf("tests execution time %s not exceeded %s", elapsed, singleTestTime)
-		}
-		if elapsed > timeout {
-			t.Errorf("tests execution time %s exceeded %s", elapsed, timeout)
-		}
 		if !called1 {
 			t.Error("test1 is not called")
 		}
@@ -79,13 +70,39 @@ func TestParallel(t *testing.T) {
 			t.Error("test2 is not called")
 		}
 	})
-	t.Run("should run 100 tests parallel", func(t *testing.T) {
-		singleTestTime := 50 * time.Millisecond
-		timeout := singleTestTime * 100 / 2
-		tests := make([]testing.InternalTest, 100)
+}
+
+func TestParallel2(t *testing.T) {
+	// Do not call t.Parallel() because test measures execution time
+	t.Run("should run 2 tests parallel", func(t *testing.T) {
+		singleTestDuration := 50 * time.Millisecond
+		expectedMaxDuration := singleTestDuration + 20*time.Millisecond
+		start := time.Now()
+		t.Run("internal", func(it *testing.T) {
+			pt.Parallel(it,
+				testing.InternalTest{F: func(*testing.T) {
+					time.Sleep(singleTestDuration)
+				}},
+				testing.InternalTest{F: func(*testing.T) {
+					time.Sleep(singleTestDuration)
+				}},
+			)
+		})
+		elapsed := time.Since(start)
+		if elapsed < singleTestDuration {
+			t.Errorf("tests execution time %s not exceeded %s", elapsed, singleTestDuration)
+		}
+		if elapsed > expectedMaxDuration {
+			t.Errorf("tests execution time %s exceeded %s", elapsed, expectedMaxDuration)
+		}
+	})
+	t.Run("should run 10 tests parallel", func(t *testing.T) {
+		singleTestDuration := 50 * time.Millisecond
+		expectedMaxDuration := singleTestDuration * 10 / 2
+		tests := make([]testing.InternalTest, 10)
 		for i := range tests {
 			tests[i] = testing.InternalTest{F: func(*testing.T) {
-				time.Sleep(singleTestTime)
+				time.Sleep(singleTestDuration)
 			}}
 		}
 		start := time.Now()
@@ -93,11 +110,85 @@ func TestParallel(t *testing.T) {
 			pt.Parallel(it, tests...)
 		})
 		elapsed := time.Since(start)
-		if elapsed < singleTestTime {
-			t.Errorf("tests execution time %s not exceeded %s", elapsed, singleTestTime)
+		if elapsed < singleTestDuration {
+			t.Errorf("tests execution time %s not exceeded %s", elapsed, singleTestDuration)
 		}
-		if elapsed > timeout {
-			t.Errorf("tests execution time %s exceeded %s", elapsed, timeout)
+		if elapsed > expectedMaxDuration {
+			t.Errorf("tests execution time %s exceeded %s", elapsed, expectedMaxDuration)
+		}
+	})
+	t.Run("should run 2 suites parallel", func(t *testing.T) {
+		singleTestDuration := 50 * time.Millisecond
+		expectedMaxDuration := singleTestDuration + 20*time.Millisecond
+		start := time.Now()
+		t.Run("internal", func(it *testing.T) {
+			pt.Parallel(it,
+				testing.InternalTest{F: func(*testing.T) {
+					time.Sleep(singleTestDuration)
+				}},
+			)
+			pt.Parallel(it,
+				testing.InternalTest{F: func(*testing.T) {
+					time.Sleep(singleTestDuration)
+				}},
+			)
+		})
+		elapsed := time.Since(start)
+		if elapsed < singleTestDuration {
+			t.Errorf("tests execution time %s not exceeded %s", elapsed, singleTestDuration)
+		}
+		if elapsed > expectedMaxDuration {
+			t.Errorf("tests execution time %s exceeded %s", elapsed, expectedMaxDuration)
+		}
+	})
+	t.Run("should run 10 suites parallel", func(t *testing.T) {
+		singleTestDuration := 50 * time.Millisecond
+		expectedMaxDuration := singleTestDuration * 10 / 2
+		start := time.Now()
+		t.Run("internal", func(it *testing.T) {
+			for i := 0; i < 10; i++ {
+				pt.Parallel(it,
+					testing.InternalTest{F: func(*testing.T) {
+						time.Sleep(singleTestDuration)
+					}},
+				)
+			}
+		})
+		elapsed := time.Since(start)
+		if elapsed < singleTestDuration {
+			t.Errorf("tests execution time %s not exceeded %s", elapsed, singleTestDuration)
+		}
+		if elapsed > expectedMaxDuration {
+			t.Errorf("tests execution time %s exceeded %s", elapsed, expectedMaxDuration)
+		}
+	})
+	t.Run("should run 2 suites sequential", func(t *testing.T) {
+		singleTestDuration := 50 * time.Millisecond
+		expectedMinDuration := 2 * singleTestDuration
+		expectedMaxDuration := 3 * singleTestDuration
+		start := time.Now()
+		t.Run("internal", func(it *testing.T) {
+			it.Run("internal2", func(it2 *testing.T) {
+				pt.Parallel(it2,
+					testing.InternalTest{F: func(*testing.T) {
+						time.Sleep(singleTestDuration)
+					}},
+				)
+			})
+			it.Run("internal2", func(it2 *testing.T) {
+				pt.Parallel(it2,
+					testing.InternalTest{F: func(*testing.T) {
+						time.Sleep(singleTestDuration)
+					}},
+				)
+			})
+		})
+		elapsed := time.Since(start)
+		if elapsed < expectedMinDuration {
+			t.Errorf("tests execution time %s not exceeded %s", elapsed, expectedMinDuration)
+		}
+		if elapsed > expectedMaxDuration {
+			t.Errorf("tests execution time %s exceeded %s", elapsed, expectedMaxDuration)
 		}
 	})
 }
@@ -125,9 +216,6 @@ func TestGroup(t *testing.T) {
 			}
 			called = true
 		}})
-		if called {
-			t.Error("test is called too early")
-		}
 		t.Run("internal", func(it *testing.T) {
 			internalTest.F(it)
 		})
@@ -135,9 +223,8 @@ func TestGroup(t *testing.T) {
 			t.Error("test is not called")
 		}
 	})
-	t.Run("should run 2 tests parallel", func(t *testing.T) {
-		singleTestTime := 50 * time.Millisecond
-		timeout := singleTestTime + 20*time.Millisecond
+	t.Run("should run 2 tests", func(t *testing.T) {
+		t.Parallel()
 		called1 := false
 		called2 := false
 		internalTest := pt.Group("",
@@ -146,14 +233,37 @@ func TestGroup(t *testing.T) {
 					t.Error("test1 is called twice")
 				}
 				called1 = true
-				time.Sleep(singleTestTime)
 			}},
 			testing.InternalTest{F: func(*testing.T) {
 				if called2 {
 					t.Error("test2 is called twice")
 				}
 				called2 = true
-				time.Sleep(singleTestTime)
+			}},
+		)
+		t.Run("internal", func(it *testing.T) {
+			internalTest.F(it)
+		})
+		if !called1 {
+			t.Error("test1 is not called")
+		}
+		if !called2 {
+			t.Error("test2 is not called")
+		}
+	})
+}
+
+func TestGroup2(t *testing.T) {
+	// Do not call t.Parallel() because test measures execution time
+	t.Run("should run 2 tests parallel", func(t *testing.T) {
+		singleTestDuration := 50 * time.Millisecond
+		expectedMaxDuration := singleTestDuration + 20*time.Millisecond
+		internalTest := pt.Group("",
+			testing.InternalTest{F: func(*testing.T) {
+				time.Sleep(singleTestDuration)
+			}},
+			testing.InternalTest{F: func(*testing.T) {
+				time.Sleep(singleTestDuration)
 			}},
 		)
 		start := time.Now()
@@ -161,17 +271,11 @@ func TestGroup(t *testing.T) {
 			internalTest.F(it)
 		})
 		elapsed := time.Since(start)
-		if elapsed < singleTestTime {
-			t.Errorf("tests execution time %s not exceeded %s", elapsed, singleTestTime)
+		if elapsed < singleTestDuration {
+			t.Errorf("tests execution time %s not exceeded %s", elapsed, singleTestDuration)
 		}
-		if elapsed > timeout {
-			t.Errorf("tests execution time %s exceeded %s", elapsed, timeout)
-		}
-		if !called1 {
-			t.Error("test1 is not called")
-		}
-		if !called2 {
-			t.Error("test2 is not called")
+		if elapsed > expectedMaxDuration {
+			t.Errorf("tests execution time %s exceeded %s", elapsed, expectedMaxDuration)
 		}
 	})
 }
@@ -200,9 +304,6 @@ func TestTest(t *testing.T) {
 			called = true
 		}
 		internalTest := pt.Test("", testFunc)
-		if called {
-			t.Error("test is called too early")
-		}
 		internalTest.F(nil)
 		if !called {
 			t.Error("test is not called")
