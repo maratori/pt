@@ -6,6 +6,9 @@ import (
 )
 
 func TotalParallel(t *testing.T, tests ...testing.InternalTest) {
+	if t == nil {
+		panic("argument t *testing.T can not be nil")
+	}
 	if !alreadyParallel(t) { // avoid panic
 		t.Parallel()
 	}

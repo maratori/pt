@@ -7,6 +7,135 @@ import (
 	"github.com/maratori/pt"
 )
 
+func TestTotalParallel(t *testing.T) {
+	t.Parallel()
+	t.Run("should panic on nil T", func(t *testing.T) {
+		t.Parallel()
+		defer assertPanic(t, "argument t *testing.T can not be nil")
+		pt.TotalParallel(nil)
+	})
+	t.Run("should not panic without tests", func(t *testing.T) {
+		t.Parallel()
+		pt.TotalParallel(t)
+	})
+	t.Run("should not panic with 1 test", func(t *testing.T) {
+		t.Parallel()
+		pt.TotalParallel(t, testing.InternalTest{F: func(*testing.T) {}})
+	})
+	t.Run("should not panic with 2 tests", func(t *testing.T) {
+		t.Parallel()
+		pt.TotalParallel(t,
+			testing.InternalTest{F: func(*testing.T) {}},
+			testing.InternalTest{F: func(*testing.T) {}},
+		)
+	})
+	t.Run("should not panic if called twice", func(t *testing.T) {
+		t.Parallel()
+		pt.TotalParallel(t, testing.InternalTest{F: func(*testing.T) {}})
+		pt.TotalParallel(t, testing.InternalTest{F: func(*testing.T) {}})
+	})
+	t.Run("should run 1 test", func(t *testing.T) {
+		t.Parallel()
+		called := false
+		t.Run("internal", func(it *testing.T) {
+			// internal2 is necessary because TotalParallel calls t.Parallel()
+			it.Run("internal2", func(it2 *testing.T) {
+				pt.TotalParallel(it2, testing.InternalTest{F: func(*testing.T) {
+					if called {
+						t.Error("test is called twice")
+					}
+					called = true
+				}})
+			})
+		})
+		if !called {
+			t.Error("test is not called")
+		}
+	})
+	t.Run("should run 2 tests", func(t *testing.T) {
+		t.Parallel()
+		called1 := false
+		called2 := false
+		t.Run("internal", func(it *testing.T) {
+			// internal2 is necessary because TotalParallel calls t.Parallel()
+			it.Run("internal2", func(it2 *testing.T) {
+				pt.TotalParallel(it2,
+					testing.InternalTest{F: func(*testing.T) {
+						if called1 {
+							t.Error("test1 is called twice")
+						}
+						called1 = true
+					}},
+					testing.InternalTest{F: func(*testing.T) {
+						if called2 {
+							t.Error("test2 is called twice")
+						}
+						called2 = true
+					}},
+				)
+			})
+		})
+		if !called1 {
+			t.Error("test1 is not called")
+		}
+		if !called2 {
+			t.Error("test2 is not called")
+		}
+	})
+}
+
+func TestTotalParallel2(t *testing.T) {
+	// Do not call t.Parallel() because test measures execution time
+	t.Run("should run 2 tests parallel", func(t *testing.T) {
+		singleTestDuration := 50 * time.Millisecond
+		expectedMaxDuration := singleTestDuration + 20*time.Millisecond
+		start := time.Now()
+		t.Run("internal", func(it *testing.T) {
+			// internal2 is necessary because TotalParallel calls t.Parallel()
+			it.Run("internal2", func(it2 *testing.T) {
+				pt.TotalParallel(it2,
+					testing.InternalTest{F: func(*testing.T) {
+						time.Sleep(singleTestDuration)
+					}},
+					testing.InternalTest{F: func(*testing.T) {
+						time.Sleep(singleTestDuration)
+					}},
+				)
+			})
+		})
+		elapsed := time.Since(start)
+		if elapsed < singleTestDuration {
+			t.Errorf("tests execution time %s not exceeded %s", elapsed, singleTestDuration)
+		}
+		if elapsed > expectedMaxDuration {
+			t.Errorf("tests execution time %s exceeded %s", elapsed, expectedMaxDuration)
+		}
+	})
+	t.Run("should run 2 suites parallel", func(t *testing.T) {
+		singleTestDuration := 50 * time.Millisecond
+		expectedMaxDuration := singleTestDuration + 20*time.Millisecond
+		start := time.Now()
+		t.Run("internal", func(it *testing.T) {
+			// internal2 is necessary because TotalParallel calls t.Parallel()
+			it.Run("internal2", func(it2 *testing.T) {
+				pt.TotalParallel(it2, testing.InternalTest{F: func(*testing.T) {
+					time.Sleep(singleTestDuration)
+				}})
+				pt.TotalParallel(it2, testing.InternalTest{F: func(*testing.T) {
+					time.Sleep(singleTestDuration)
+				}})
+			})
+		})
+		elapsed := time.Since(start)
+		if elapsed < singleTestDuration {
+			t.Errorf("tests execution time %s not exceeded %s", elapsed, singleTestDuration)
+		}
+		if elapsed > expectedMaxDuration {
+			t.Errorf("tests execution time %s exceeded %s", elapsed, expectedMaxDuration)
+		}
+	})
+}
+
 func TestParallel(t *testing.T) {
 	t.Parallel()
 	t.Run("should panic on nil T", func(t *testing.T) {
@@ -24,7 +153,10 @@ func TestParallel(t *testing.T) {
 	})
 	t.Run("should not panic with 2 tests", func(t *testing.T) {
 		t.Parallel()
-		pt.Parallel(t, testing.InternalTest{F: func(*testing.T) {}}, testing.InternalTest{F: func(*testing.T) {}})
+		pt.Parallel(t,
+			testing.InternalTest{F: func(*testing.T) {}},
+			testing.InternalTest{F: func(*testing.T) {}},
+		)
 	})
 	t.Run("should run 1 test", func(t *testing.T) {
 		t.Parallel()
@@ -52,14 +184,12 @@ func TestParallel(t *testing.T) {
 						t.Error("test1 is called twice")
 					}
 					called1 = true
-
 				}},
 				testing.InternalTest{F: func(*testing.T) {
 					if called2 {
 						t.Error("test2 is called twice")
 					}
 					called2 = true
-
 				}},
 			)
 		})
@@ -122,16 +252,12 @@ func TestParallel2(t *testing.T) {
 		expectedMaxDuration := singleTestDuration + 20*time.Millisecond
 		start := time.Now()
 		t.Run("internal", func(it *testing.T) {
-			pt.Parallel(it,
-				testing.InternalTest{F: func(*testing.T) {
-					time.Sleep(singleTestDuration)
-				}},
-			)
-			pt.Parallel(it,
-				testing.InternalTest{F: func(*testing.T) {
-					time.Sleep(singleTestDuration)
-				}},
-			)
+			pt.Parallel(it, testing.InternalTest{F: func(*testing.T) {
+				time.Sleep(singleTestDuration)
+			}})
+			pt.Parallel(it, testing.InternalTest{F: func(*testing.T) {
+				time.Sleep(singleTestDuration)
+			}})
 		})
 		elapsed := time.Since(start)
 		if elapsed < singleTestDuration {
@@ -147,11 +273,9 @@ func TestParallel2(t *testing.T) {
 		start := time.Now()
 		t.Run("internal", func(it *testing.T) {
 			for i := 0; i < 10; i++ {
-				pt.Parallel(it,
-					testing.InternalTest{F: func(*testing.T) {
-						time.Sleep(singleTestDuration)
-					}},
-				)
+				pt.Parallel(it, testing.InternalTest{F: func(*testing.T) {
+					time.Sleep(singleTestDuration)
+				}})
 			}
 		})
 		elapsed := time.Since(start)
@@ -169,18 +293,14 @@ func TestParallel2(t *testing.T) {
 		start := time.Now()
 		t.Run("internal", func(it *testing.T) {
 			it.Run("internal2", func(it2 *testing.T) {
-				pt.Parallel(it2,
-					testing.InternalTest{F: func(*testing.T) {
-						time.Sleep(singleTestDuration)
-					}},
-				)
+				pt.Parallel(it2, testing.InternalTest{F: func(*testing.T) {
+					time.Sleep(singleTestDuration)
+				}})
 			})
 			it.Run("internal2", func(it2 *testing.T) {
-				pt.Parallel(it2,
-					testing.InternalTest{F: func(*testing.T) {
-						time.Sleep(singleTestDuration)
-					}},
-				)
+				pt.Parallel(it2, testing.InternalTest{F: func(*testing.T) {
+					time.Sleep(singleTestDuration)
+				}})
 			})
 		})
 		elapsed := time.Since(start)
