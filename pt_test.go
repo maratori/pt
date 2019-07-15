@@ -20,17 +20,17 @@ func TestParallel(t *testing.T) {
 	})
 	t.Run("should not panic with 1 test", func(t *testing.T) {
 		t.Parallel()
-		pt.Parallel(t, testing.InternalTest{F: func(t *testing.T) {}})
+		pt.Parallel(t, testing.InternalTest{F: func(*testing.T) {}})
 	})
 	t.Run("should not panic with 2 tests", func(t *testing.T) {
 		t.Parallel()
-		pt.Parallel(t, testing.InternalTest{F: func(t *testing.T) {}}, testing.InternalTest{F: func(t *testing.T) {}})
+		pt.Parallel(t, testing.InternalTest{F: func(*testing.T) {}}, testing.InternalTest{F: func(*testing.T) {}})
 	})
 	t.Run("should run 1 test", func(t *testing.T) {
 		t.Parallel()
 		called := false
-		t.Run("internal", func(t *testing.T) {
-			pt.Parallel(t, testing.InternalTest{F: func(t *testing.T) {
+		t.Run("internal", func(it *testing.T) {
+			pt.Parallel(it, testing.InternalTest{F: func(*testing.T) {
 				if called {
 					t.Error("test is called twice")
 				}
@@ -47,16 +47,16 @@ func TestParallel(t *testing.T) {
 		called1 := false
 		called2 := false
 		start := time.Now()
-		t.Run("internal", func(t *testing.T) {
-			pt.Parallel(t,
-				testing.InternalTest{F: func(t *testing.T) {
+		t.Run("internal", func(it *testing.T) {
+			pt.Parallel(it,
+				testing.InternalTest{F: func(*testing.T) {
 					if called1 {
 						t.Error("test1 is called twice")
 					}
 					called1 = true
 					time.Sleep(singleTestTime)
 				}},
-				testing.InternalTest{F: func(t *testing.T) {
+				testing.InternalTest{F: func(*testing.T) {
 					if called2 {
 						t.Error("test2 is called twice")
 					}
@@ -84,13 +84,13 @@ func TestParallel(t *testing.T) {
 		timeout := singleTestTime * 100 / 2
 		tests := make([]testing.InternalTest, 100)
 		for i := range tests {
-			tests[i] = testing.InternalTest{F: func(t *testing.T) {
+			tests[i] = testing.InternalTest{F: func(*testing.T) {
 				time.Sleep(singleTestTime)
 			}}
 		}
 		start := time.Now()
-		t.Run("internal", func(t *testing.T) {
-			pt.Parallel(t, tests...)
+		t.Run("internal", func(it *testing.T) {
+			pt.Parallel(it, tests...)
 		})
 		elapsed := time.Since(start)
 		if elapsed < singleTestTime {
@@ -119,7 +119,7 @@ func TestGroup(t *testing.T) {
 	t.Run("should run 1 test", func(t *testing.T) {
 		t.Parallel()
 		called := false
-		internalTest := pt.Group("", testing.InternalTest{F: func(t *testing.T) {
+		internalTest := pt.Group("", testing.InternalTest{F: func(*testing.T) {
 			if called {
 				t.Error("test is called twice")
 			}
@@ -128,8 +128,8 @@ func TestGroup(t *testing.T) {
 		if called {
 			t.Error("test is called too early")
 		}
-		t.Run("internal", func(t *testing.T) {
-			internalTest.F(t)
+		t.Run("internal", func(it *testing.T) {
+			internalTest.F(it)
 		})
 		if !called {
 			t.Error("test is not called")
@@ -141,14 +141,14 @@ func TestGroup(t *testing.T) {
 		called1 := false
 		called2 := false
 		internalTest := pt.Group("",
-			testing.InternalTest{F: func(t *testing.T) {
+			testing.InternalTest{F: func(*testing.T) {
 				if called1 {
 					t.Error("test1 is called twice")
 				}
 				called1 = true
 				time.Sleep(singleTestTime)
 			}},
-			testing.InternalTest{F: func(t *testing.T) {
+			testing.InternalTest{F: func(*testing.T) {
 				if called2 {
 					t.Error("test2 is called twice")
 				}
@@ -157,8 +157,8 @@ func TestGroup(t *testing.T) {
 			}},
 		)
 		start := time.Now()
-		t.Run("internal", func(t *testing.T) {
-			internalTest.F(t)
+		t.Run("internal", func(it *testing.T) {
+			internalTest.F(it)
 		})
 		elapsed := time.Since(start)
 		if elapsed < singleTestTime {
@@ -174,7 +174,6 @@ func TestGroup(t *testing.T) {
 			t.Error("test2 is not called")
 		}
 	})
-
 }
 
 func TestTest(t *testing.T) {
@@ -186,7 +185,7 @@ func TestTest(t *testing.T) {
 	})
 	t.Run("should return right name", func(t *testing.T) {
 		t.Parallel()
-		internalTest := pt.Test("abc", func(t *testing.T) {})
+		internalTest := pt.Test("abc", func(*testing.T) {})
 		if internalTest.Name != "abc" {
 			t.Error("name is wrong")
 		}
@@ -194,7 +193,7 @@ func TestTest(t *testing.T) {
 	t.Run("should return right test func", func(t *testing.T) {
 		t.Parallel()
 		called := false
-		testFunc := func(_ *testing.T) {
+		testFunc := func(*testing.T) {
 			if called {
 				t.Error("test is called twice")
 			}
