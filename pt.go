@@ -49,7 +49,7 @@ func Test(name string, test func(t *testing.T)) testing.InternalTest {
 
 func alreadyParallel(t *testing.T) bool {
 	// copy of mutex is not used, so can ignore govet error
-	testObject := reflect.ValueOf(*t) // nolint:govet
+	testObject := reflect.ValueOf(*t) // nolint
 	isParallelField := testObject.FieldByName("isParallel")
 	isParallel := isParallelField.Bool()
 	return isParallel

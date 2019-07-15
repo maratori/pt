@@ -91,7 +91,3 @@ linters:
 issues:
   max-issues-per-linter: 0
   max-same-issues: 0
-  # TODO: remove
-  exclude-rules:
-    - linters: unused
-      text: "U1000"
