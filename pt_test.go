@@ -7,40 +7,40 @@ import (
 	"github.com/maratori/pt"
 )
 
-func TestTotalParallel(t *testing.T) {
+func TestPackageParallel(t *testing.T) {
 	t.Parallel()
 	t.Run("should panic on nil T", func(t *testing.T) {
 		t.Parallel()
 		defer assertPanic(t, "argument t *testing.T can not be nil")
-		pt.TotalParallel(nil)
+		pt.PackageParallel(nil)
 	})
 	t.Run("should not panic without tests", func(t *testing.T) {
 		t.Parallel()
-		pt.TotalParallel(t)
+		pt.PackageParallel(t)
 	})
 	t.Run("should not panic with 1 test", func(t *testing.T) {
 		t.Parallel()
-		pt.TotalParallel(t, testing.InternalTest{F: func(*testing.T) {}})
+		pt.PackageParallel(t, testing.InternalTest{F: func(*testing.T) {}})
 	})
 	t.Run("should not panic with 2 tests", func(t *testing.T) {
 		t.Parallel()
-		pt.TotalParallel(t,
+		pt.PackageParallel(t,
 			testing.InternalTest{F: func(*testing.T) {}},
 			testing.InternalTest{F: func(*testing.T) {}},
 		)
 	})
 	t.Run("should not panic if called twice", func(t *testing.T) {
 		t.Parallel()
-		pt.TotalParallel(t, testing.InternalTest{F: func(*testing.T) {}})
-		pt.TotalParallel(t, testing.InternalTest{F: func(*testing.T) {}})
+		pt.PackageParallel(t, testing.InternalTest{F: func(*testing.T) {}})
+		pt.PackageParallel(t, testing.InternalTest{F: func(*testing.T) {}})
 	})
 	t.Run("should run 1 test", func(t *testing.T) {
 		t.Parallel()
 		called := false
 		t.Run("internal", func(it *testing.T) {
-			// internal2 is necessary because TotalParallel calls t.Parallel()
+			// internal2 is necessary because PackageParallel calls t.Parallel()
 			it.Run("internal2", func(it2 *testing.T) {
-				pt.TotalParallel(it2, testing.InternalTest{F: func(*testing.T) {
+				pt.PackageParallel(it2, testing.InternalTest{F: func(*testing.T) {
 					if called {
 						t.Error("test is called twice")
 					}
@@ -57,9 +57,9 @@ func TestTotalParallel(t *testing.T) {
 		called1 := false
 		called2 := false
 		t.Run("internal", func(it *testing.T) {
-			// internal2 is necessary because TotalParallel calls t.Parallel()
+			// internal2 is necessary because PackageParallel calls t.Parallel()
 			it.Run("internal2", func(it2 *testing.T) {
-				pt.TotalParallel(it2,
+				pt.PackageParallel(it2,
 					testing.InternalTest{F: func(*testing.T) {
 						if called1 {
 							t.Error("test1 is called twice")
@@ -84,16 +84,16 @@ func TestTotalParallel(t *testing.T) {
 	})
 }
 
-func TestTotalParallel2(t *testing.T) {
+func TestPackageParallel2(t *testing.T) {
 	// Do not call t.Parallel() because test measures execution time
 	t.Run("should run 2 tests parallel", func(t *testing.T) {
 		singleTestDuration := 50 * time.Millisecond
 		expectedMaxDuration := singleTestDuration + 20*time.Millisecond
 		start := time.Now()
 		t.Run("internal", func(it *testing.T) {
-			// internal2 is necessary because TotalParallel calls t.Parallel()
+			// internal2 is necessary because PackageParallel calls t.Parallel()
 			it.Run("internal2", func(it2 *testing.T) {
-				pt.TotalParallel(it2,
+				pt.PackageParallel(it2,
 					testing.InternalTest{F: func(*testing.T) {
 						time.Sleep(singleTestDuration)
 					}},
@@ -116,12 +116,12 @@ func TestTotalParallel2(t *testing.T) {
 		expectedMaxDuration := singleTestDuration + 20*time.Millisecond
 		start := time.Now()
 		t.Run("internal", func(it *testing.T) {
-			// internal2 is necessary because TotalParallel calls t.Parallel()
+			// internal2 is necessary because PackageParallel calls t.Parallel()
 			it.Run("internal2", func(it2 *testing.T) {
-				pt.TotalParallel(it2, testing.InternalTest{F: func(*testing.T) {
+				pt.PackageParallel(it2, testing.InternalTest{F: func(*testing.T) {
 					time.Sleep(singleTestDuration)
 				}})
-				pt.TotalParallel(it2, testing.InternalTest{F: func(*testing.T) {
+				pt.PackageParallel(it2, testing.InternalTest{F: func(*testing.T) {
 					time.Sleep(singleTestDuration)
 				}})
 			})
