@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func TotalParallel(t *testing.T, tests ...testing.InternalTest) {
+func PackageParallel(t *testing.T, tests ...testing.InternalTest) {
 	if t == nil {
 		panic("argument t *testing.T can not be nil")
 	}
