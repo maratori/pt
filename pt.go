@@ -1,8 +1,9 @@
 /*
-Package pt provides functions to run tests parallel.
+Package pt provides functions to run tests in parallel.
 You don't have to call t.Parallel() anymore.
 
-Usage
+
+Example
 
 	func TestMyFunc(t *testing.T) {
 		pt.PackageParallel(t,
