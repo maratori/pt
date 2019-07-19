@@ -1,7 +1,8 @@
-# <img src="logo.png" height="100px" alt="Logo"> <br> [![Build Status](https://travis-ci.com/maratori/pt.svg?branch=master)](https://travis-ci.com/maratori/pt) [![codecov](https://codecov.io/gh/maratori/pt/branch/master/graph/badge.svg)](https://codecov.io/gh/maratori/pt) [![codebeat badge](https://codebeat.co/badges/60157255-e2dd-4819-a0c5-4ac164f57b88)](https://codebeat.co/projects/github-com-maratori-pt-master) [![Maintainability](https://api.codeclimate.com/v1/badges/0078c4d48b975f84c1c9/maintainability)](https://codeclimate.com/github/maratori/pt/maintainability) [![Go Report Card](https://goreportcard.com/badge/github.com/maratori/pt)](https://goreportcard.com/report/github.com/maratori/pt) [![GitHub](https://img.shields.io/github/license/maratori/pt.svg)](https://github.com/maratori/pt/blob/master/LICENSE) [![GoDoc](https://godoc.org/github.com/maratori/pt?status.svg)](http://godoc.org/github.com/maratori/pt)
+# <img src="logo.png" height="100px" alt="Logo"> <br> [![Build Status](https://travis-ci.com/maratori/pt.svg?branch=master)](https://travis-ci.com/maratori/pt) [![codecov](https://codecov.io/gh/maratori/pt/branch/master/graph/badge.svg)](https://codecov.io/gh/maratori/pt) [![codebeat badge](https://codebeat.co/badges/60157255-e2dd-4819-a0c5-4ac164f57b88)](https://codebeat.co/projects/github-com-maratori-pt-master) [![Maintainability](https://api.codeclimate.com/v1/badges/0078c4d48b975f84c1c9/maintainability)](https://codeclimate.com/github/maratori/pt/maintainability) [![Go Report Card](https://goreportcard.com/badge/github.com/maratori/pt)](https://goreportcard.com/report/github.com/maratori/pt) [![GitHub](https://img.shields.io/github/license/maratori/pt.svg)](LICENSE) [![GoDoc](https://godoc.org/github.com/maratori/pt?status.svg)](http://godoc.org/github.com/maratori/pt)
 
 
 This is a go (golang) package with functions to **P**arallel **T**ests run.
+You don't have to call `t.Parallel()` anymore.
 
 
 ## Installation
@@ -208,3 +209,20 @@ func TestD(t *testing.T) {
 	pt.Parallel(t, test15, test16)
 }
 ```
+
+## Changelog
+
+### [v1.0.0] - 2019-07-21
+
+#### Added
+* Functions: PackageParallel, Parallel, Group, Test
+* [GoDoc](http://godoc.org/github.com/maratori/pt)
+* Example [package](example)
+* Unit [tests](pt_test.go) for all functions
+* All possible linters in [golangci-lint](https://github.com/golangci/golangci-lint) ([config](.golangci.yml))
+* Project [logo](logo.png)
+* MIT [license](LICENSE)
+
+## License
+
+[MIT License](LICENSE)
