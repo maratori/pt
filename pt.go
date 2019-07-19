@@ -2,7 +2,6 @@
 Package pt provides functions to run tests in parallel.
 You don't have to call t.Parallel() anymore.
 
-
 Example
 
 	func TestMyFunc(t *testing.T) {
@@ -20,7 +19,7 @@ Example
 				pt.Test("should not do something else", func(t *testing.T) {
 					// test code
 				}),
-			}),
+			),
 		)
 	}
 
@@ -48,6 +47,33 @@ You can achieve the same behavior with bare testing package:
 			})
 		})
 	}
+
+
+The difference between PackageParallel and Parallel can be demonstrated with code below.
+
+Tests will run in parallel: 1-8.
+
+After that tests will run in parallel: 9-12.
+
+After that tests will run in parallel: 13-16.
+
+
+	func TestA(t *testing.T) {
+		pt.PackageParallel(t, test1, test2)
+		pt.PackageParallel(t, test3, test4)
+	}
+	func TestB(t *testing.T) {
+		pt.PackageParallel(t, test5, test6)
+		pt.Parallel(t, test7, test8)
+	}
+	func TestC(t *testing.T) {
+		pt.Parallel(t, test9, test10)
+		pt.Parallel(t, test11, test12)
+	}
+	func TestD(t *testing.T) {
+		pt.Parallel(t, test13, test14)
+		pt.Parallel(t, test15, test16)
+	}
 */
 package pt
 
@@ -57,7 +83,7 @@ import (
 )
 
 /*
-PackageParallel runs provided tests in parallel with other tests in package.
+PackageParallel is non-blocking function that runs provided tests in parallel with other tests in package.
 It is designed to be used with Group and Test.
 
 	func TestA(t *testing.T) {
@@ -91,7 +117,7 @@ func PackageParallel(t *testing.T, tests ...testing.InternalTest) {
 }
 
 /*
-Parallel runs provided tests in parallel.
+Parallel is non-blocking function that runs provided tests in parallel.
 It is designed to be used with Group and Test.
 
 	func TestA(t *testing.T) {

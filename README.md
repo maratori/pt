@@ -2,3 +2,185 @@
 
 
 This is a go (golang) package with functions to run **P**arallel **T**ests.
+
+## Installation
+
+```bash
+go get github.com/maratori/pt
+```
+or
+```bash
+dep ensure -add github.com/maratori/pt
+```
+
+## Usage
+
+You can use `pt.PackageParallel`, `pt.Parallel`, `pt.Group`, `pt.Test` in standard go test function to run tests parallel.
+
+See [example_test.go](example/example_test.go)
+
+```go
+...
+
+func TestSum(t *testing.T) {
+	pt.PackageParallel(t,
+		pt.Test("should be 0 without values", func(t *testing.T) {
+			if sum() != 0 {
+				t.Fail()
+			}
+		}),
+		pt.Group("should be equal to single value",
+			pt.Test("0", testSumSingleValue(0)),
+			pt.Test("1", testSumSingleValue(1)),
+			pt.Test("-1", testSumSingleValue(-1)),
+			pt.Test("123", testSumSingleValue(123)),
+			pt.Test("-123", testSumSingleValue(-123)),
+		),
+		pt.Group("should be sum of two values",
+			pt.Test("0+0 = 0", testSumTwoValues(0, 0, 0)),
+			pt.Test("0+1 = 1", testSumTwoValues(0, 1, 1)),
+			pt.Test("1+0 = 1", testSumTwoValues(1, 0, 1)),
+			pt.Test("5+6 = 11", testSumTwoValues(5, 6, 11)),
+		),
+		pt.Test("1+2+3+4+5 = 15", func(t *testing.T) {
+			if sum(1, 2, 3, 4, 5) != 15 {
+				t.Fail()
+			}
+		}),
+	)
+}
+
+func TestFibonacci(t *testing.T) {
+	pt.PackageParallel(t,
+		pt.Test("0 -> 0", testFibonacci(0, 0)),
+		pt.Test("1 -> 1", testFibonacci(1, 1)),
+		pt.Test("2 -> 1", testFibonacci(2, 1)),
+		pt.Test("3 -> 2", testFibonacci(3, 2)),
+		pt.Test("4 -> 3", testFibonacci(4, 3)),
+	)
+}
+
+...
+```
+
+When you run go test, all these tests run in parallel.
+
+```bash
+go test -v github.com/maratori/pt/example
+```
+
+<details><summary>Output</summary>
+
+```
+=== RUN   TestSum
+=== PAUSE TestSum
+=== RUN   TestFibonacci
+=== PAUSE TestFibonacci
+=== CONT  TestSum
+=== CONT  TestFibonacci
+=== RUN   TestFibonacci/0_->_0
+=== RUN   TestSum/should_be_0_without_values
+=== PAUSE TestFibonacci/0_->_0
+=== RUN   TestFibonacci/1_->_1
+=== PAUSE TestFibonacci/1_->_1
+=== RUN   TestFibonacci/2_->_1
+=== PAUSE TestFibonacci/2_->_1
+=== RUN   TestFibonacci/3_->_2
+=== PAUSE TestFibonacci/3_->_2
+=== PAUSE TestSum/should_be_0_without_values
+=== RUN   TestFibonacci/4_->_3
+=== PAUSE TestFibonacci/4_->_3
+=== RUN   TestSum/should_be_equal_to_single_value
+=== CONT  TestFibonacci/2_->_1
+=== PAUSE TestSum/should_be_equal_to_single_value
+=== CONT  TestFibonacci/0_->_0
+=== CONT  TestFibonacci/1_->_1
+=== CONT  TestFibonacci/3_->_2
+=== CONT  TestFibonacci/4_->_3
+=== RUN   TestSum/should_be_sum_of_two_values
+=== PAUSE TestSum/should_be_sum_of_two_values
+=== RUN   TestSum/1+2+3+4+5_=_15
+=== PAUSE TestSum/1+2+3+4+5_=_15
+=== CONT  TestSum/should_be_0_without_values
+=== CONT  TestSum/should_be_sum_of_two_values
+=== RUN   TestSum/should_be_sum_of_two_values/0+0_=_0
+=== PAUSE TestSum/should_be_sum_of_two_values/0+0_=_0
+=== RUN   TestSum/should_be_sum_of_two_values/0+1_=_1
+--- PASS: TestFibonacci (0.00s)
+    --- PASS: TestFibonacci/0_->_0 (0.00s)
+    --- PASS: TestFibonacci/2_->_1 (0.00s)
+    --- PASS: TestFibonacci/1_->_1 (0.00s)
+    --- PASS: TestFibonacci/3_->_2 (0.00s)
+    --- PASS: TestFibonacci/4_->_3 (0.00s)
+=== CONT  TestSum/1+2+3+4+5_=_15
+=== CONT  TestSum/should_be_equal_to_single_value
+=== RUN   TestSum/should_be_equal_to_single_value/0
+=== PAUSE TestSum/should_be_sum_of_two_values/0+1_=_1
+=== PAUSE TestSum/should_be_equal_to_single_value/0
+=== RUN   TestSum/should_be_sum_of_two_values/1+0_=_1
+=== RUN   TestSum/should_be_equal_to_single_value/1
+=== PAUSE TestSum/should_be_sum_of_two_values/1+0_=_1
+=== PAUSE TestSum/should_be_equal_to_single_value/1
+=== RUN   TestSum/should_be_sum_of_two_values/5+6_=_11
+=== PAUSE TestSum/should_be_sum_of_two_values/5+6_=_11
+=== CONT  TestSum/should_be_sum_of_two_values/0+0_=_0
+=== CONT  TestSum/should_be_sum_of_two_values/5+6_=_11
+=== CONT  TestSum/should_be_sum_of_two_values/0+1_=_1
+=== RUN   TestSum/should_be_equal_to_single_value/-1
+=== CONT  TestSum/should_be_sum_of_two_values/1+0_=_1
+=== PAUSE TestSum/should_be_equal_to_single_value/-1
+=== RUN   TestSum/should_be_equal_to_single_value/123
+=== PAUSE TestSum/should_be_equal_to_single_value/123
+=== RUN   TestSum/should_be_equal_to_single_value/-123
+=== PAUSE TestSum/should_be_equal_to_single_value/-123
+=== CONT  TestSum/should_be_equal_to_single_value/0
+=== CONT  TestSum/should_be_equal_to_single_value/-1
+=== CONT  TestSum/should_be_equal_to_single_value/123
+=== CONT  TestSum/should_be_equal_to_single_value/-123
+=== CONT  TestSum/should_be_equal_to_single_value/1
+--- PASS: TestSum (0.00s)
+    --- PASS: TestSum/should_be_0_without_values (0.00s)
+    --- PASS: TestSum/1+2+3+4+5_=_15 (0.00s)
+    --- PASS: TestSum/should_be_sum_of_two_values (0.00s)
+        --- PASS: TestSum/should_be_sum_of_two_values/0+0_=_0 (0.00s)
+        --- PASS: TestSum/should_be_sum_of_two_values/0+1_=_1 (0.00s)
+        --- PASS: TestSum/should_be_sum_of_two_values/5+6_=_11 (0.00s)
+        --- PASS: TestSum/should_be_sum_of_two_values/1+0_=_1 (0.00s)
+    --- PASS: TestSum/should_be_equal_to_single_value (0.00s)
+        --- PASS: TestSum/should_be_equal_to_single_value/0 (0.00s)
+        --- PASS: TestSum/should_be_equal_to_single_value/123 (0.00s)
+        --- PASS: TestSum/should_be_equal_to_single_value/-1 (0.00s)
+        --- PASS: TestSum/should_be_equal_to_single_value/-123 (0.00s)
+        --- PASS: TestSum/should_be_equal_to_single_value/1 (0.00s)
+PASS
+ok      github.com/maratori/pt/example  0.006s
+```
+</details>
+
+
+## Difference between `pt.PackageParallel` and `pt.Parallel`
+
+The difference can be demonstrated with code below.  
+Tests will run in parallel: 1-8.  
+After that tests will run in parallel: 9-12.  
+After that tests will run in parallel: 13-16.  
+See [godoc](https://godoc.org/github.com/maratori/pt) for more info.  
+
+```go
+func TestA(t *testing.T) {
+	pt.PackageParallel(t, test1, test2)
+	pt.PackageParallel(t, test3, test4)
+}
+func TestB(t *testing.T) {
+	pt.PackageParallel(t, test5, test6)
+	pt.Parallel(t, test7, test8)
+}
+func TestC(t *testing.T) {
+	pt.Parallel(t, test9, test10)
+	pt.Parallel(t, test11, test12)
+}
+func TestD(t *testing.T) {
+	pt.Parallel(t, test13, test14)
+	pt.Parallel(t, test15, test16)
+}
+```
