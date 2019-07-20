@@ -1,7 +1,8 @@
 # <img src="logo.png" height="100px" alt="Logo"> <br> [![Build Status](https://travis-ci.com/maratori/pt.svg?branch=master)](https://travis-ci.com/maratori/pt) [![codecov](https://codecov.io/gh/maratori/pt/branch/master/graph/badge.svg)](https://codecov.io/gh/maratori/pt) [![codebeat badge](https://codebeat.co/badges/60157255-e2dd-4819-a0c5-4ac164f57b88)](https://codebeat.co/projects/github-com-maratori-pt-master) [![Maintainability](https://api.codeclimate.com/v1/badges/0078c4d48b975f84c1c9/maintainability)](https://codeclimate.com/github/maratori/pt/maintainability) [![Go Report Card](https://goreportcard.com/badge/github.com/maratori/pt)](https://goreportcard.com/report/github.com/maratori/pt) [![GitHub](https://img.shields.io/github/license/maratori/pt.svg)](https://github.com/maratori/pt/blob/master/LICENSE) [![GoDoc](https://godoc.org/github.com/maratori/pt?status.svg)](http://godoc.org/github.com/maratori/pt)
 
 
-This is a go (golang) package with functions to run **P**arallel **T**ests.
+This is a go (golang) package with functions to **P**arallel **T**ests run.
+
 
 ## Installation
 
@@ -12,6 +13,7 @@ or
 ```bash
 dep ensure -add github.com/maratori/pt
 ```
+
 
 ## Usage
 
@@ -156,6 +158,28 @@ PASS
 ok      github.com/maratori/pt/example  0.006s
 ```
 </details>
+
+
+## Flags for `go test`
+
+There are 2 flags for `go test` command related to parallel run.
+
+* -parallel n
+> Allow parallel execution of test functions that call t.Parallel.
+> The value of this flag is the maximum number of tests to run
+> simultaneously; by default, it is set to the value of GOMAXPROCS.
+> Note that -parallel only applies within a single test binary.
+> The 'go test' command may run tests for different packages
+> in parallel as well, according to the setting of the -p flag
+> (see 'go help build').
+
+* -p n
+> The number of programs, such as build commands or
+> test binaries, that can be run in parallel.
+> The default is the number of CPUs available.
+
+So `go test -p 2 -parallel 1` will run tests from two packages in parallel, but does not parallel tests within that packages.  
+On the other hand `go test -p 1 -parallel 2` will run tests from different packages sequentially. And run two tests in parallel within single package.
 
 
 ## Difference between `pt.PackageParallel` and `pt.Parallel`
