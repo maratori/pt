@@ -1,3 +1,5 @@
+// +build example
+
 package example
 
 func sum(numbers ...int) int {
