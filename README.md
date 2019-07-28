@@ -1,7 +1,7 @@
 # <img src="logo.png" height="100px" alt="Logo"> <br> [![Build Status](https://travis-ci.com/maratori/pt.svg?branch=master)](https://travis-ci.com/maratori/pt) [![codecov](https://codecov.io/gh/maratori/pt/branch/master/graph/badge.svg)](https://codecov.io/gh/maratori/pt) [![codebeat badge](https://codebeat.co/badges/60157255-e2dd-4819-a0c5-4ac164f57b88)](https://codebeat.co/projects/github-com-maratori-pt-master) [![Maintainability](https://api.codeclimate.com/v1/badges/0078c4d48b975f84c1c9/maintainability)](https://codeclimate.com/github/maratori/pt/maintainability) [![Go Report Card](https://goreportcard.com/badge/github.com/maratori/pt)](https://goreportcard.com/report/github.com/maratori/pt) [![GitHub](https://img.shields.io/github/license/maratori/pt.svg)](LICENSE) [![GoDoc](https://godoc.org/github.com/maratori/pt?status.svg)](http://godoc.org/github.com/maratori/pt)
 
 
-This is a go (golang) package with functions to **P**arallel **T**ests run.
+This is a go (golang) package with functions to run **P**arallel **T**ests.
 You don't have to call `t.Parallel()` anymore.
 
 
@@ -18,7 +18,7 @@ dep ensure -add github.com/maratori/pt
 
 ## Usage
 
-You can use `pt.PackageParallel`, `pt.Parallel`, `pt.Group`, `pt.Test` in standard go test function to run tests parallel.
+You can use `pt.PackageParallel`, `pt.Parallel`, `pt.Group`, `pt.Test` in standard go test function to run tests in parallel.
 
 See [example_test.go](example/example_test.go)
 
@@ -66,7 +66,7 @@ func TestFibonacci(t *testing.T) {
 ...
 ```
 
-When you run go test, all these tests run in parallel.
+When you call `go test`, all these tests will run in parallel.
 
 ```bash
 go test -v github.com/maratori/pt/example
@@ -163,7 +163,7 @@ ok      github.com/maratori/pt/example  0.006s
 
 ## Flags for `go test`
 
-There are 2 flags for `go test` command related to parallel run.
+There are 2 flags for `go test` command related to parallel execution.
 
 * -parallel n
 > Allow parallel execution of test functions that call t.Parallel.
@@ -179,16 +179,17 @@ There are 2 flags for `go test` command related to parallel run.
 > test binaries, that can be run in parallel.
 > The default is the number of CPUs available.
 
-So `go test -p 2 -parallel 1` will run tests from two packages in parallel, but does not parallel tests within that packages.  
-On the other hand `go test -p 1 -parallel 2` will run tests from different packages sequentially. And run two tests in parallel within single package.
+So `go test -p 8 -parallel 1` runs test packages in parallel, while tests inside each package are executed sequentially.  
+On the other hand, `go test -p 1 -parallel 8` runs different packages sequentially, but tests inside each package are executed in parallel.
 
 
 ## Difference between `pt.PackageParallel` and `pt.Parallel`
 
-The difference can be demonstrated with code below.  
-Tests will run in parallel: 1-8.  
-After that tests will run in parallel: 9-12.  
-After that tests will run in parallel: 13-16.  
+The difference can be demonstrated with the code below. Tests will be executed in the following sequence:
+1. Tests 1-8 run in parallel
+1. After that tests 9-12 run in parallel
+1. After that tests 13-16 run in parallel
+
 See [godoc](https://godoc.org/github.com/maratori/pt) for more info.  
 
 ```go
@@ -211,6 +212,11 @@ func TestD(t *testing.T) {
 ```
 
 ## Changelog
+
+### [unreleased]
+
+#### Fixed
+* Readme and godoc slightly improved
 
 ### [v1.0.0] - 2019-07-21
 

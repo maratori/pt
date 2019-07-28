@@ -49,13 +49,13 @@ You can achieve the same behavior with bare testing package:
 	}
 
 
-The difference between PackageParallel and Parallel can be demonstrated with code below.
+The difference can be demonstrated with the code below. Tests will be executed in the following sequence:
 
-Tests will run in parallel: 1-8.
+1. Tests 1-8 run in parallel
 
-After that tests will run in parallel: 9-12.
+2. After that tests 9-12 run in parallel
 
-After that tests will run in parallel: 13-16.
+3. After that tests 13-16 run in parallel
 
 
 	func TestA(t *testing.T) {
@@ -84,7 +84,7 @@ import (
 
 /*
 PackageParallel is non-blocking function that runs provided tests in parallel with other tests in package.
-It is designed to be used with Group and Test.
+It can take Group and Test as arguments.
 
 	func TestA(t *testing.T) {
 		pt.PackageParallel(t, test1, test2)
@@ -118,7 +118,7 @@ func PackageParallel(t *testing.T, tests ...testing.InternalTest) {
 
 /*
 Parallel is non-blocking function that runs provided tests in parallel.
-It is designed to be used with Group and Test.
+It can take Group and Test as arguments.
 
 	func TestA(t *testing.T) {
 		pt.Parallel(t, test1, test2)
@@ -139,7 +139,7 @@ is equivalent to
 
 
 Note that Parallel will not execute different TestXXX and TestYYY in parallel.
-For example test3 and test4 will run in parallel and after that test5 and test6 will run in parallel.
+For example, test3 and test4 will run in parallel and after that test5 and test6 will run in parallel.
 
 	func TestB(t *testing.T) {
 		pt.Parallel(t, test3, test4)
@@ -165,8 +165,8 @@ func Parallel(t *testing.T, tests ...testing.InternalTest) {
 
 // Group is a constructor of testing.InternalTest.
 // It wraps provided tests with a single testing.InternalTest.
-// Provided tests will run in parallel when wrapper is executed.
-// It is designed to be used as an argument of Group, Parallel and PackageParallel.
+// Provided tests will run in parallel when the wrapper is executed.
+// It is designed to be an argument of Group, Parallel and PackageParallel.
 func Group(name string, tests ...testing.InternalTest) testing.InternalTest {
 	return testing.InternalTest{
 		Name: name,
@@ -177,7 +177,7 @@ func Group(name string, tests ...testing.InternalTest) testing.InternalTest {
 }
 
 // Test is a simple constructor of testing.InternalTest.
-// It is designed to be used as an argument of Group, Parallel and PackageParallel.
+// It is designed to be an argument of Group, Parallel and PackageParallel.
 func Test(name string, test func(t *testing.T)) testing.InternalTest {
 	if test == nil {
 		panic("argument test func(t *testing.T) can not be nil")
