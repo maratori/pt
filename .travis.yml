@@ -13,10 +13,13 @@ matrix:
       install:
         - curl -sSfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | bash -s -- -b $GOPATH/bin v1.17.1
         - golangci-lint --version
+        - GO111MODULE=off go get github.com/maratori/gochecknonamedreturn
       script:
         - go test -race -p=8 -parallel=8 -tags=example -coverpkg ./... -coverprofile=coverage.out ./...
 
         - golangci-lint run
+
+        - gochecknonamedreturn ./...
 
         - echo "Check that go.mod and go.sum are tidy"
         - go mod tidy
