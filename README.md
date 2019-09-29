@@ -160,6 +160,15 @@ ok      github.com/maratori/pt/example  0.006s
 ```
 </details>
 
+## Supported golang versions
+
+* 1.8
+* 1.9
+* 1.10
+* 1.11
+* 1.12
+* 1.13
+
 
 ## Flags for `go test`
 
@@ -216,6 +225,7 @@ func TestD(t *testing.T) {
 ### [unreleased]
 
 #### Fixed
+* Use go 1.13
 * Readme and godoc slightly improved
 
 ### [v1.0.0] - 2019-07-21
