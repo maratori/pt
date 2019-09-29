@@ -222,10 +222,12 @@ func TestD(t *testing.T) {
 
 ## Changelog
 
-### [unreleased]
+### [v1.0.1] - 2019-09-29
+
+#### Changed
+* Use go 1.13
 
 #### Fixed
-* Use go 1.13
 * Readme and godoc slightly improved
 
 ### [v1.0.0] - 2019-07-21
