@@ -1,5 +1,6 @@
 run:
   deadline: 1m # default 1m
+  tests: true # default true
 
 linters-settings:
   errcheck:
@@ -8,7 +9,32 @@ linters-settings:
     ignore: "fmt:.*" # default fmt:.*
     exclude: "" # default ""
   govet:
-    check-shadowing: true # default false
+    disable-all: true
+    enable:
+      - asmdecl
+      - assign
+      - atomic
+      - atomicalign
+      - bools
+      - buildtag
+      - cgocall
+      - composites
+      - copylocks
+      - errorsas
+      - httpresponse
+      - loopclosure
+      - lostcancel
+      - nilfunc
+      - printf
+      - shadow
+      - shift
+      - stdmethods
+      - structtag
+      - tests
+      - unmarshal
+      - unreachable
+      - unsafeptr
+      - unusedresult
     settings:
       shadow:
         strict: true # default false
@@ -20,6 +46,9 @@ linters-settings:
     exported-fields: true # default false
   dupl:
     threshold: 150 # default 150
+  funlen:
+    lines: 60 # default 60
+    statements: 40 # default 40
   goconst:
     min-len: 3 # default 3
     min-occurrences: 3 # default 3
@@ -45,7 +74,7 @@ linters-settings:
     locale: us
     ignore-words: "" # default: ""
   nakedret:
-    max-func-lines: 30 # default 30
+    max-func-lines: 0 # default 30
   prealloc:
     simple: false # default true
     range-loops: true # default true
@@ -65,11 +94,12 @@ linters:
     - staticcheck
     - structcheck
     - typecheck
-    - unused
+    #- unused # false positives
     - varcheck
     ## disabled by default
     - bodyclose
     - dupl
+    - funlen
     - gochecknoglobals
     - gochecknoinits
     - goconst
@@ -78,7 +108,6 @@ linters:
     - goimports
     - golint
     - gosec
-    - interfacer
     - lll
     - maligned
     - misspell
@@ -87,7 +116,12 @@ linters:
     - scopelint
     - unconvert
     - unparam
+    - whitespace
 
 issues:
   max-issues-per-linter: 0
   max-same-issues: 0
+  exclude-rules:
+    - path: _test\.go
+      linters:
+        - funlen
