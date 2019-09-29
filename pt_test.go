@@ -87,8 +87,8 @@ func TestPackageParallel(t *testing.T) {
 func TestPackageParallel2(t *testing.T) {
 	// Do not call t.Parallel() because test measures execution time
 	t.Run("should run 2 tests parallel", func(t *testing.T) {
-		singleTestDuration := 50 * time.Millisecond
-		expectedMaxDuration := singleTestDuration + 20*time.Millisecond
+		singleTestDuration := 1 * time.Second
+		expectedMaxDuration := singleTestDuration + 300*time.Millisecond
 		start := time.Now()
 		t.Run("internal", func(it *testing.T) {
 			// internal2 is necessary because PackageParallel calls t.Parallel()
@@ -111,9 +111,9 @@ func TestPackageParallel2(t *testing.T) {
 			t.Errorf("tests execution time %s exceeded %s", elapsed, expectedMaxDuration)
 		}
 	})
-	t.Run("should run 2 suites parallel", func(t *testing.T) {
-		singleTestDuration := 50 * time.Millisecond
-		expectedMaxDuration := singleTestDuration + 20*time.Millisecond
+	t.Run("should run 2 suites parallel in one test", func(t *testing.T) {
+		singleTestDuration := 1 * time.Second
+		expectedMaxDuration := singleTestDuration + 300*time.Millisecond
 		start := time.Now()
 		t.Run("internal", func(it *testing.T) {
 			// internal2 is necessary because PackageParallel calls t.Parallel()
@@ -122,6 +122,37 @@ func TestPackageParallel2(t *testing.T) {
 					time.Sleep(singleTestDuration)
 				}})
 				pt.PackageParallel(it2, testing.InternalTest{F: func(*testing.T) {
+					time.Sleep(singleTestDuration)
+				}})
+			})
+		})
+		elapsed := time.Since(start)
+		if elapsed < singleTestDuration {
+			t.Errorf("tests execution time %s not exceeded %s", elapsed, singleTestDuration)
+		}
+		if elapsed > expectedMaxDuration {
+			t.Errorf("tests execution time %s exceeded %s", elapsed, expectedMaxDuration)
+		}
+	})
+	t.Run("should run 2 suites parallel in different tests", func(t *testing.T) {
+		singleTestDuration := 1 * time.Second
+		expectedMaxDuration := singleTestDuration + 300*time.Millisecond
+		start := time.Now()
+		t.Run("internal", func(it *testing.T) {
+			// internal2 is necessary because PackageParallel calls t.Parallel()
+			it.Run("internal2", func(it2 *testing.T) {
+				pt.PackageParallel(it2, testing.InternalTest{F: func(*testing.T) {
+					time.Sleep(singleTestDuration)
+				}})
+				pt.PackageParallel(it2, testing.InternalTest{F: func(*testing.T) {
+					time.Sleep(singleTestDuration)
+				}})
+			})
+			it.Run("internal3", func(it3 *testing.T) {
+				pt.PackageParallel(it3, testing.InternalTest{F: func(*testing.T) {
+					time.Sleep(singleTestDuration)
+				}})
+				pt.PackageParallel(it3, testing.InternalTest{F: func(*testing.T) {
 					time.Sleep(singleTestDuration)
 				}})
 			})
@@ -205,8 +236,8 @@ func TestParallel(t *testing.T) {
 func TestParallel2(t *testing.T) {
 	// Do not call t.Parallel() because test measures execution time
 	t.Run("should run 2 tests parallel", func(t *testing.T) {
-		singleTestDuration := 50 * time.Millisecond
-		expectedMaxDuration := singleTestDuration + 20*time.Millisecond
+		singleTestDuration := 1 * time.Second
+		expectedMaxDuration := singleTestDuration + 300*time.Millisecond
 		start := time.Now()
 		t.Run("internal", func(it *testing.T) {
 			pt.Parallel(it,
@@ -227,7 +258,7 @@ func TestParallel2(t *testing.T) {
 		}
 	})
 	t.Run("should run 10 tests parallel", func(t *testing.T) {
-		singleTestDuration := 50 * time.Millisecond
+		singleTestDuration := 1 * time.Second
 		expectedMaxDuration := singleTestDuration * 10 / 2
 		tests := make([]testing.InternalTest, 10)
 		for i := range tests {
@@ -248,8 +279,8 @@ func TestParallel2(t *testing.T) {
 		}
 	})
 	t.Run("should run 2 suites parallel", func(t *testing.T) {
-		singleTestDuration := 50 * time.Millisecond
-		expectedMaxDuration := singleTestDuration + 20*time.Millisecond
+		singleTestDuration := 1 * time.Second
+		expectedMaxDuration := singleTestDuration + 300*time.Millisecond
 		start := time.Now()
 		t.Run("internal", func(it *testing.T) {
 			pt.Parallel(it, testing.InternalTest{F: func(*testing.T) {
@@ -268,7 +299,7 @@ func TestParallel2(t *testing.T) {
 		}
 	})
 	t.Run("should run 10 suites parallel", func(t *testing.T) {
-		singleTestDuration := 50 * time.Millisecond
+		singleTestDuration := 1 * time.Second
 		expectedMaxDuration := singleTestDuration * 10 / 2
 		start := time.Now()
 		t.Run("internal", func(it *testing.T) {
@@ -287,7 +318,7 @@ func TestParallel2(t *testing.T) {
 		}
 	})
 	t.Run("should run 2 suites sequential", func(t *testing.T) {
-		singleTestDuration := 50 * time.Millisecond
+		singleTestDuration := 1 * time.Second
 		expectedMinDuration := 2 * singleTestDuration
 		expectedMaxDuration := 3 * singleTestDuration
 		start := time.Now()
@@ -376,8 +407,8 @@ func TestGroup(t *testing.T) {
 func TestGroup2(t *testing.T) {
 	// Do not call t.Parallel() because test measures execution time
 	t.Run("should run 2 tests parallel", func(t *testing.T) {
-		singleTestDuration := 50 * time.Millisecond
-		expectedMaxDuration := singleTestDuration + 20*time.Millisecond
+		singleTestDuration := 1 * time.Second
+		expectedMaxDuration := singleTestDuration + 300*time.Millisecond
 		internalTest := pt.Group("",
 			testing.InternalTest{F: func(*testing.T) {
 				time.Sleep(singleTestDuration)
