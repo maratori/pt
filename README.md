@@ -247,8 +247,8 @@ func TestD(t *testing.T) {
 
 
 
-[ci-img]: https://app.travis-ci.com/maratori/pt.svg?branch=main
-[ci-url]: https://app.travis-ci.com/maratori/pt
+[ci-img]: https://github.com/maratori/pt/actions/workflows/ci.yml/badge.svg
+[ci-url]: https://github.com/maratori/pt/actions/workflows/ci.yml
 [codecov-img]: https://codecov.io/gh/maratori/pt/branch/main/graph/badge.svg?token=WisNd8SOoW
 [codecov-url]: https://codecov.io/gh/maratori/pt
 [codebeat-img]: https://codebeat.co/badges/95684dfc-294c-4712-a20b-fb19c6e6b0c5
