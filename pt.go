@@ -2,7 +2,7 @@
 Package pt provides functions to run tests in parallel.
 You don't have to call t.Parallel() anymore.
 
-Example
+# Example
 
 	func TestMyFunc(t *testing.T) {
 		pt.PackageParallel(t,
@@ -48,7 +48,6 @@ You can achieve the same behavior with bare testing package:
 		})
 	}
 
-
 The difference can be demonstrated with the code below. Tests will be executed in the following sequence:
 
 1. Tests 1-8 run in parallel
@@ -56,7 +55,6 @@ The difference can be demonstrated with the code below. Tests will be executed i
 2. After that tests 9-12 run in parallel
 
 3. After that tests 13-16 run in parallel
-
 
 	func TestA(t *testing.T) {
 		pt.PackageParallel(t, test1, test2)
@@ -137,7 +135,6 @@ is equivalent to
 		})
 	}
 
-
 Note that Parallel will not execute different TestXXX and TestYYY in parallel.
 For example, test3 and test4 will run in parallel and after that test5 and test6 will run in parallel.
 
@@ -188,10 +185,10 @@ func Test(name string, test func(t *testing.T)) testing.InternalTest {
 	}
 }
 
-// alreadyParallel returns value of private field isParallel for provided t *testing.T
+// alreadyParallel returns value of private field isParallel for provided t *testing.T.
 func alreadyParallel(t *testing.T) bool {
 	// copy of mutex is not used, so can ignore govet error
-	testObject := reflect.ValueOf(*t) // nolint:govet
+	testObject := reflect.ValueOf(*t) //nolint:govet // here it's ok to copy lock value
 	isParallelField := testObject.FieldByName("isParallel")
 	isParallel := isParallelField.Bool()
 	return isParallel
