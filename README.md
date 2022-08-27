@@ -1,4 +1,4 @@
-# <img src="logo.png" height="100px" alt="Logo"> <br> [![Build Status](https://travis-ci.com/maratori/pt.svg?branch=master)](https://travis-ci.com/maratori/pt) [![codecov](https://codecov.io/gh/maratori/pt/branch/master/graph/badge.svg)](https://codecov.io/gh/maratori/pt) [![codebeat badge](https://codebeat.co/badges/60157255-e2dd-4819-a0c5-4ac164f57b88)](https://codebeat.co/projects/github-com-maratori-pt-master) [![Maintainability](https://api.codeclimate.com/v1/badges/0078c4d48b975f84c1c9/maintainability)](https://codeclimate.com/github/maratori/pt/maintainability) [![Go Report Card](https://goreportcard.com/badge/github.com/maratori/pt)](https://goreportcard.com/report/github.com/maratori/pt) [![GitHub](https://img.shields.io/github/license/maratori/pt.svg)](LICENSE) [![GoDoc](https://godoc.org/github.com/maratori/pt?status.svg)](http://godoc.org/github.com/maratori/pt)
+# <img src="logo.png" height="100px" alt="Logo"> <br> [![CI][ci-img]][ci-url] [![Codecov][codecov-img]][codecov-url] [![Codebeat][codebeat-img]][codebeat-url] [![Maintainability][codeclimate-img]][codeclimate-url] [![Go Report Card][goreportcard-img]][goreportcard-url] [![License][license-img]][license-url] [![Go Reference][godoc-img]][godoc-url]
 
 
 This is a go (golang) package with functions to run **P**arallel **T**ests.
@@ -243,4 +243,21 @@ func TestD(t *testing.T) {
 
 ## License
 
-[MIT License](LICENSE)
+[MIT License](https://github.com/maratori/pt/blob/main/LICENSE)
+
+
+
+[ci-img]: https://github.com/maratori/pt/actions/workflows/ci.yml/badge.svg
+[ci-url]: https://github.com/maratori/pt/actions/workflows/ci.yml
+[codecov-img]: https://codecov.io/gh/maratori/pt/branch/main/graph/badge.svg?token=WisNd8SOoW
+[codecov-url]: https://codecov.io/gh/maratori/pt
+[codebeat-img]: https://codebeat.co/badges/95684dfc-294c-4712-a20b-fb19c6e6b0c5
+[codebeat-url]: https://codebeat.co/projects/github-com-maratori-pt-main
+[codeclimate-img]: https://api.codeclimate.com/v1/badges/0078c4d48b975f84c1c9/maintainability
+[codeclimate-url]: https://codeclimate.com/github/maratori/pt/maintainability
+[goreportcard-img]: https://goreportcard.com/badge/github.com/maratori/pt
+[goreportcard-url]: https://goreportcard.com/report/github.com/maratori/pt
+[license-img]: https://img.shields.io/github/license/maratori/pt.svg
+[license-url]: https://github.com/maratori/pt/blob/main/LICENSE
+[godoc-img]: https://pkg.go.dev/badge/github.com/maratori/pt.svg
+[godoc-url]: https://pkg.go.dev/github.com/maratori/pt
