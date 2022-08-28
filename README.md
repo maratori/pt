@@ -10,10 +10,6 @@ You don't have to call `t.Parallel()` anymore.
 ```bash
 go get github.com/maratori/pt
 ```
-or
-```bash
-dep ensure -add github.com/maratori/pt
-```
 
 
 ## Usage
@@ -69,7 +65,7 @@ func TestFibonacci(t *testing.T) {
 When you call `go test`, all these tests will run in parallel.
 
 ```bash
-go test -v github.com/maratori/pt/example
+go test -v -p 8 -parallel 8 --tags example github.com/maratori/pt/example
 ```
 
 <details><summary>Output</summary>
@@ -80,83 +76,83 @@ go test -v github.com/maratori/pt/example
 === RUN   TestFibonacci
 === PAUSE TestFibonacci
 === CONT  TestSum
+=== RUN   TestSum/should_be_0_without_values
+=== PAUSE TestSum/should_be_0_without_values
+=== RUN   TestSum/should_be_equal_to_single_value
+=== PAUSE TestSum/should_be_equal_to_single_value
 === CONT  TestFibonacci
 === RUN   TestFibonacci/0_->_0
-=== RUN   TestSum/should_be_0_without_values
-=== PAUSE TestFibonacci/0_->_0
-=== RUN   TestFibonacci/1_->_1
-=== PAUSE TestFibonacci/1_->_1
-=== RUN   TestFibonacci/2_->_1
-=== PAUSE TestFibonacci/2_->_1
-=== RUN   TestFibonacci/3_->_2
-=== PAUSE TestFibonacci/3_->_2
-=== PAUSE TestSum/should_be_0_without_values
-=== RUN   TestFibonacci/4_->_3
-=== PAUSE TestFibonacci/4_->_3
-=== RUN   TestSum/should_be_equal_to_single_value
-=== CONT  TestFibonacci/2_->_1
-=== PAUSE TestSum/should_be_equal_to_single_value
-=== CONT  TestFibonacci/0_->_0
-=== CONT  TestFibonacci/1_->_1
-=== CONT  TestFibonacci/3_->_2
-=== CONT  TestFibonacci/4_->_3
 === RUN   TestSum/should_be_sum_of_two_values
 === PAUSE TestSum/should_be_sum_of_two_values
 === RUN   TestSum/1+2+3+4+5_=_15
+=== PAUSE TestFibonacci/0_->_0
 === PAUSE TestSum/1+2+3+4+5_=_15
 === CONT  TestSum/should_be_0_without_values
+=== RUN   TestFibonacci/1_->_1
+=== PAUSE TestFibonacci/1_->_1
+=== RUN   TestFibonacci/2_->_1
+=== CONT  TestSum/1+2+3+4+5_=_15
+=== PAUSE TestFibonacci/2_->_1
+=== RUN   TestFibonacci/3_->_2
+=== PAUSE TestFibonacci/3_->_2
+=== CONT  TestSum/should_be_equal_to_single_value
+=== RUN   TestFibonacci/4_->_3
+=== PAUSE TestFibonacci/4_->_3
+=== CONT  TestFibonacci/0_->_0
 === CONT  TestSum/should_be_sum_of_two_values
 === RUN   TestSum/should_be_sum_of_two_values/0+0_=_0
+=== CONT  TestFibonacci/2_->_1
 === PAUSE TestSum/should_be_sum_of_two_values/0+0_=_0
+=== CONT  TestFibonacci/4_->_3
+=== CONT  TestFibonacci/1_->_1
+=== CONT  TestFibonacci/3_->_2
+=== RUN   TestSum/should_be_equal_to_single_value/0
+=== PAUSE TestSum/should_be_equal_to_single_value/0
 === RUN   TestSum/should_be_sum_of_two_values/0+1_=_1
+=== RUN   TestSum/should_be_equal_to_single_value/1
+=== PAUSE TestSum/should_be_sum_of_two_values/0+1_=_1
+=== PAUSE TestSum/should_be_equal_to_single_value/1
 --- PASS: TestFibonacci (0.00s)
     --- PASS: TestFibonacci/0_->_0 (0.00s)
     --- PASS: TestFibonacci/2_->_1 (0.00s)
+    --- PASS: TestFibonacci/4_->_3 (0.00s)
     --- PASS: TestFibonacci/1_->_1 (0.00s)
     --- PASS: TestFibonacci/3_->_2 (0.00s)
-    --- PASS: TestFibonacci/4_->_3 (0.00s)
-=== CONT  TestSum/1+2+3+4+5_=_15
-=== CONT  TestSum/should_be_equal_to_single_value
-=== RUN   TestSum/should_be_equal_to_single_value/0
-=== PAUSE TestSum/should_be_sum_of_two_values/0+1_=_1
-=== PAUSE TestSum/should_be_equal_to_single_value/0
-=== RUN   TestSum/should_be_sum_of_two_values/1+0_=_1
-=== RUN   TestSum/should_be_equal_to_single_value/1
-=== PAUSE TestSum/should_be_sum_of_two_values/1+0_=_1
-=== PAUSE TestSum/should_be_equal_to_single_value/1
-=== RUN   TestSum/should_be_sum_of_two_values/5+6_=_11
-=== PAUSE TestSum/should_be_sum_of_two_values/5+6_=_11
-=== CONT  TestSum/should_be_sum_of_two_values/0+0_=_0
-=== CONT  TestSum/should_be_sum_of_two_values/5+6_=_11
-=== CONT  TestSum/should_be_sum_of_two_values/0+1_=_1
 === RUN   TestSum/should_be_equal_to_single_value/-1
-=== CONT  TestSum/should_be_sum_of_two_values/1+0_=_1
 === PAUSE TestSum/should_be_equal_to_single_value/-1
+=== RUN   TestSum/should_be_sum_of_two_values/1+0_=_1
 === RUN   TestSum/should_be_equal_to_single_value/123
+=== PAUSE TestSum/should_be_sum_of_two_values/1+0_=_1
 === PAUSE TestSum/should_be_equal_to_single_value/123
+=== RUN   TestSum/should_be_sum_of_two_values/5+6_=_11
 === RUN   TestSum/should_be_equal_to_single_value/-123
 === PAUSE TestSum/should_be_equal_to_single_value/-123
+=== PAUSE TestSum/should_be_sum_of_two_values/5+6_=_11
+=== CONT  TestSum/should_be_sum_of_two_values/0+0_=_0
 === CONT  TestSum/should_be_equal_to_single_value/0
-=== CONT  TestSum/should_be_equal_to_single_value/-1
 === CONT  TestSum/should_be_equal_to_single_value/123
+=== CONT  TestSum/should_be_sum_of_two_values/1+0_=_1
 === CONT  TestSum/should_be_equal_to_single_value/-123
 === CONT  TestSum/should_be_equal_to_single_value/1
+=== CONT  TestSum/should_be_sum_of_two_values/0+1_=_1
+=== CONT  TestSum/should_be_sum_of_two_values/5+6_=_11
+=== CONT  TestSum/should_be_equal_to_single_value/-1
 --- PASS: TestSum (0.00s)
     --- PASS: TestSum/should_be_0_without_values (0.00s)
     --- PASS: TestSum/1+2+3+4+5_=_15 (0.00s)
     --- PASS: TestSum/should_be_sum_of_two_values (0.00s)
         --- PASS: TestSum/should_be_sum_of_two_values/0+0_=_0 (0.00s)
+        --- PASS: TestSum/should_be_sum_of_two_values/1+0_=_1 (0.00s)
         --- PASS: TestSum/should_be_sum_of_two_values/0+1_=_1 (0.00s)
         --- PASS: TestSum/should_be_sum_of_two_values/5+6_=_11 (0.00s)
-        --- PASS: TestSum/should_be_sum_of_two_values/1+0_=_1 (0.00s)
     --- PASS: TestSum/should_be_equal_to_single_value (0.00s)
         --- PASS: TestSum/should_be_equal_to_single_value/0 (0.00s)
         --- PASS: TestSum/should_be_equal_to_single_value/123 (0.00s)
-        --- PASS: TestSum/should_be_equal_to_single_value/-1 (0.00s)
         --- PASS: TestSum/should_be_equal_to_single_value/-123 (0.00s)
         --- PASS: TestSum/should_be_equal_to_single_value/1 (0.00s)
+        --- PASS: TestSum/should_be_equal_to_single_value/-1 (0.00s)
 PASS
-ok      github.com/maratori/pt/example  0.006s
+ok  	github.com/maratori/pt/example	0.091s
 ```
 </details>
 
@@ -168,6 +164,12 @@ ok      github.com/maratori/pt/example  0.006s
 * 1.11
 * 1.12
 * 1.13
+* 1.14
+* 1.15
+* 1.16
+* 1.17
+* 1.18
+* 1.19
 
 
 ## Flags for `go test`
@@ -199,7 +201,7 @@ The difference can be demonstrated with the code below. Tests will be executed i
 1. After that tests 9-12 run in parallel
 1. After that tests 13-16 run in parallel
 
-See [godoc](https://godoc.org/github.com/maratori/pt) for more info.  
+See [godoc][godoc-url] for more info.  
 
 ```go
 func TestA(t *testing.T) {
@@ -243,7 +245,7 @@ func TestD(t *testing.T) {
 
 ## License
 
-[MIT License](https://github.com/maratori/pt/blob/main/LICENSE)
+[MIT License][license-url]
 
 
 
