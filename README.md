@@ -224,6 +224,15 @@ func TestD(t *testing.T) {
 
 ## Changelog
 
+### [v1.0.2] - 2022-08-28
+
+#### Changed
+* Use go 1.19
+* Test all supported go versions on CI (1.8 .. 1.19)
+
+#### Fixed
+* Follow new go 1.19 doc comments [conventions](https://go.dev/doc/comment)
+
 ### [v1.0.1] - 2019-09-29
 
 #### Changed
