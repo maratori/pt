@@ -32,6 +32,35 @@ jobs:
       - run: go test -race -p=8 -parallel=8 -tags=example -coverpkg ./... -coverprofile=coverage.out ./...
       - uses: codecov/codecov-action@v3
 
+  compatibility:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        go:
+          - "1.8"
+          - "1.9"
+          - "1.10"
+          - "1.11"
+          - "1.12"
+          - "1.13"
+          - "1.14"
+          - "1.15"
+          - "1.16"
+          - "1.17"
+          - "1.18"
+          - "1.19"
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          path: go/src/github.com/maratori/pt
+      - uses: actions/setup-go@v3
+        with:
+          go-version: ${{ matrix.go }}
+      - run: go test -race -p=8 -parallel=8 -tags=example ./...
+        working-directory: ${{ github.workspace }}/go/src/github.com/maratori/pt
+        env:
+          GOPATH: ${{ github.workspace }}/go
+
   lint:
     runs-on: ubuntu-latest
     steps:
