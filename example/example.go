@@ -1,13 +1,14 @@
+//go:build example
 // +build example
 
 package example
 
 func sum(numbers ...int) int {
-	sum := 0
+	s := 0
 	for _, n := range numbers {
-		sum += n
+		s += n
 	}
-	return sum
+	return s
 }
 
 func fibonacci(n uint64) uint64 {
