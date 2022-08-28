@@ -187,8 +187,7 @@ func Test(name string, test func(t *testing.T)) testing.InternalTest {
 
 // alreadyParallel returns value of private field isParallel for provided t *testing.T.
 func alreadyParallel(t *testing.T) bool {
-	// copy of mutex is not used, so can ignore govet error
-	testObject := reflect.ValueOf(*t) //nolint:govet // here it's ok to copy lock value
+	testObject := reflect.ValueOf(t).Elem()
 	isParallelField := testObject.FieldByName("isParallel")
 	isParallel := isParallelField.Bool()
 	return isParallel

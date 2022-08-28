@@ -4,6 +4,8 @@ run:
   # Timeout for analysis, e.g. 30s, 5m.
   # Default: 1m
   timeout: 3m
+  build-tags:
+    - example
 
 # This file contains only configs which differ from defaults.
 # All possible options can be found here https://github.com/golangci/golangci-lint/blob/master/.golangci.reference.yml
@@ -274,5 +276,8 @@ issues:
 
     # specific to pt
     - path: "_test\\.go"
-      linters:
-        - gocognit
+      linters: [ gocognit ]
+    - path: "example_test\\.go"
+      linters: [ testpackage ]
+    - path: "example\\.go"
+      linters: [ gomnd ]
