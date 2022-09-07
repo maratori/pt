@@ -1,4 +1,4 @@
-# <img src="logo.png" height="100px" alt="Logo"> <br> [![CI][ci-img]][ci-url] [![Codecov][codecov-img]][codecov-url] [![Codebeat][codebeat-img]][codebeat-url] [![Maintainability][codeclimate-img]][codeclimate-url] [![Go Report Card][goreportcard-img]][goreportcard-url] [![License][license-img]][license-url] [![Go Reference][godoc-img]][godoc-url]
+# <img src="logo.png" height="100px" alt="Logo"> <br> [![go.mod version][go-img]][go-url] [![CI][ci-img]][ci-url] [![Codecov][codecov-img]][codecov-url] [![Codebeat][codebeat-img]][codebeat-url] [![Maintainability][codeclimate-img]][codeclimate-url] [![Go Report Card][goreportcard-img]][goreportcard-url] [![License][license-img]][license-url] [![Go Reference][godoc-img]][godoc-url]
 
 
 This is a go (golang) package with functions to run **P**arallel **T**ests.
@@ -258,6 +258,8 @@ func TestD(t *testing.T) {
 
 
 
+[go-img]: https://img.shields.io/github/go-mod/go-version/maratori/pt
+[go-url]: /go.mod
 [ci-img]: https://github.com/maratori/pt/actions/workflows/ci.yml/badge.svg
 [ci-url]: https://github.com/maratori/pt/actions/workflows/ci.yml
 [codecov-img]: https://codecov.io/gh/maratori/pt/branch/main/graph/badge.svg?token=WisNd8SOoW
